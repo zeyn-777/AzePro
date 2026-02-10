@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AZE YOTUBE</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f0f0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+    /* ÜMUMİ RESET */
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Roboto', sans-serif; }
+    body { background-color: #0f0f0f; color: white; padding-bottom: 60px; padding-top: 50px; }
+
+    /* --- YUXARI BAŞLIQ (HEADER) --- */
+    .header {
+        position: fixed; top: 0; width: 100%; height: 50px; background: rgba(15,15,15,0.95); z-index: 100;
+        display: flex; align-items: center; justify-content: space-between; padding: 0 15px;
+        border-bottom: 1px solid #222; backdrop-filter: blur(5px);
+    }
+
+    /* BƏZƏKLİ LOQO DİZAYNI */
+    .logo { 
+        font-family: 'Oswald', sans-serif; font-size: 24px; letter-spacing: 0.5px;
+        display: flex; align-items: center; gap: 5px; cursor: pointer;
+    }
+    .logo i { color: #ff0000; font-size: 28px; }
+    .logo span.aze { color: white; }
+    .logo span.tube { color: #ff0000; }
+
+    .top-icons { display: flex; gap: 18px; font-size: 20px; color: white; align-items: center; }
+    .profile-icon { width: 26px; height: 26px; background: #555; border-radius: 50%; text-align: center; line-height: 26px; font-size: 14px; font-weight: bold; }
+
+    /* --- KATEQORİYALAR (SCROLL) --- */
+    .categories {
+        position: fixed; top: 50px; width: 100%; background: #0f0f0f; z-index: 90;
+        display: flex; gap: 10px; overflow-x: auto; padding: 10px 15px; 
+        scrollbar-width: none; border-bottom: 1px solid #222;
+    }
+    .cat-btn {
+        background: #272727; color: white; padding: 6px 14px; border-radius: 8px; font-size: 14px; white-space: nowrap; transition: 0.3s; cursor: pointer;
+    }
+    .cat-btn:hover { background: #3f3f3f; }
+    .cat-btn.active { background: white; color: black; font-weight: bold; }
+
+    /* --- VİDEO GRID SİSTEMİ (PC-də yan-yana, Telebonda alt-alta) --- */
+    .main-container {
+        margin-top: 60px; /* Kateqoriya yeri */
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 20px; padding: 10px;
+    }
+
+    /* VİDEO KARTI */
+    .video-card { cursor: pointer; transition: transform 0.2s; background: #0f0f0f; }
+    .video-card:hover { transform: scale(1.02); z-index: 10; }
+    
+    .thumbnail-box { position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 12px; overflow: hidden; }
+    .thumbnail { width: 100%; height: 100%; object-fit: cover; }
+    .duration { position: absolute; bottom: 6px; right: 6px; background: rgba(0,0,0,0.8); padding: 2px 6px; font-size: 12px; border-radius: 4px; font-weight: 500; }
+    
+    .video-details { display: flex; gap: 12px; padding: 10px 5px; }
+    .channel-pic { width: 36px; height: 36px; border-radius: 50%; background: #333; }
+    .info { flex: 1; }
+    .title { font-size: 15px; font-weight: bold; line-height: 1.3; margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .meta { font-size: 12px; color: #aaa; }
+
+    /* --- SHORTS RƏFİ --- */
+    .shorts-shelf { grid-column: 1 / -1; margin: 20px 0; padding-bottom: 20px; border-top: 4px solid #222; border-bottom: 4px solid #222; }
+    .shelf-header { display: flex; align-items: center; gap: 8px; padding: 15px; font-size: 18px; font-weight: bold; font-family: 'Oswald', sans-serif; }
+    .shorts-icon { color: #ff0000; }
+    
+    .shorts-container { display: flex; gap: 15px; overflow-x: auto; padding: 0 15px; scrollbar-width: none; }
+    .short-card { min-width: 150px; height: 260px; position: relative; border-radius: 12px; overflow: hidden; cursor: pointer; }
+    .short-img { width: 100%; height: 100%; object-fit: cover; }
+    .short-title { position: absolute; bottom: 10px; left: 8px; font-size: 13px; font-weight: bold; text-shadow: 1px 1px 3px black; padding-right: 5px; }
+
+    /* --- AŞAĞI MENYU (BOTTOM NAV) --- */
+    .bottom-nav {
+        position: fixed; bottom: 0; width: 100%; height: 55px; background: #0f0f0f; border-top: 1px solid #222;
+        display: flex; justify-content: space-around; align-items: center; z-index: 1000;
+    }
+    .nav-item { display: flex; flex-direction: column; align-items: center; font-size: 10px; color: #aaa; gap: 4px; cursor: pointer; }
+    .nav-item i { font-size: 22px; }
+    .nav-item.active { color: white; }
+    .plus-btn { font-size: 32px !important; border: 1px solid #aaa; border-radius: 50%; padding: 0 6px; font-weight: lighter; }
+
+    /* --- PLEYER MODAL (TAM EKRAN) --- */
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 2000; }
+    .modal-content { width: 100%; height: 100%; display: flex; flex-direction: column; }
+    .video-box { width: 100%; aspect-ratio: 16/9; background: black; position: relative; }
+    .video-box iframe { width: 100%; height: 100%; border: none; }
+    
+    .modal-details { padding: 15px; flex: 1; overflow-y: auto; background: #0f0f0f; }
+    .close-btn { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.6); padding: 5px 12px; border-radius: 20px; color: white; cursor: pointer; z-index: 2010; font-weight: bold; }
+
+    /* Yükləmə Düyməsi */
+    .download-btn {
+        display: flex; align-items: center; justify-content: center; gap: 10px;
+        background: #222; color: white; text-decoration: none;
+        padding: 12px; margin-top: 15px; border-radius: 25px; font-weight: bold;
+    }
+    .download-btn:hover { background: #333; }
+
+    /* MOBİL ÜÇÜN XÜSUSİ TƏNZİMLƏMƏLƏR */
+    @media (max-width: 600px) {
+        .main-container { grid-template-columns: 1fr; gap: 0; padding: 0; }
+        .video-card { border-radius: 0; margin-bottom: 5px; border-bottom: 4px solid #0a0a0a; }
+        .thumbnail-box { border-radius: 0; }
+    }
+</style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="logo">
+            <i class="fab fa-youtube"></i>
+            <span class="aze">AZE</span>
+            <span class="tube">YOTUBE</span>
+        </div>
+        <div class="top-icons">
+            <i class="fas fa-cast"></i>
+            <i class="fas fa-search" onclick="alert('Axtarış')"></i>
+            <div class="profile-icon">A</div>
+        </div>
+    </div>
+
+    <div class="categories">
+        <div class="cat-btn active">Hamsı</div>
+        <div class="cat-btn">Yeni</div>
+        <div class="cat-btn">Musiqi</div>
+        <div class="cat-btn">Oyunlar</div>
+        <div class="cat-btn">Canlı</div>
+        <div class="cat-btn">Futbol</div>
+    </div>
+
+    <div class="main-container" id="videoFeed">
+        </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active">
+            <i class="fas fa-home"></i> Ana səhifə
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-bolt"></i> Shorts
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-plus plus-btn"></i>
+        </div>
+        <div class="nav-item">
+            <i class="fab fa-youtube"></i> Abunəlik
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-user-circle"></i> Siz
+        </div>
+    </div>
+
+    <div id="playerModal" class="modal">
+        <div class="modal-content">
+            <div class="video-box">
+                <div class="close-btn" onclick="closePlayer()">
+                    <i class="fas fa-chevron-down"></i> Bağla
+                </div>
+                <div id="playerFrame" style="width:100%; height:100%;"></div>
+            </div>
+            <div class="modal-details">
+                <h2 id="mTitle" style="font-size:18px; margin-bottom:5px;">Video Başlığı</h2>
+                <p id="mMeta" style="color:#aaa; font-size:14px;">Kanal Adı • 1M baxış</p>
+                
+                <a href="#" class="download-btn" onclick="alert('Yükləmə linki tezliklə əlavə olunacaq!')">
+                    <i class="fas fa-download"></i> Videonu Yüklə
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- VİDEOLAR BAZASI ---
+        const content = [
+            { type: 'video', id: "jfKfPfyJRdk", title: "Lofi Girl - Relaxing Music Radio", author: "Lofi Girl", views: "52K baxış", time: "Canlı" },
+            { type: 'video', id: "kJQP7kiw5Fk", title: "Luis Fonsi - Despacito ft. Daddy Yankee", author: "Luis Fonsi", views: "8.2B baxış", time: "6 il əvvəl" },
+            { type: 'shorts' }, // Shorts Rəfi burda gələcək
+            { type: 'video', id: "JGwWNGJdvx8", title: "Ed Sheeran - Shape of You (Official)", author: "Ed Sheeran", views: "6.1B baxış", time: "6 il əvvəl" },
+            { type: 'video', id: "LXb3EKWsInQ", title: "COSTA RICA IN 4K 60fps HDR", author: "Jacob & Katie", views: "102M baxış", time: "4 il əvvəl" },
+            { type: 'video', id: "F4tHL8reNCs", title: "PlayStation 5 Review - The Final Verdict", author: "IGN", views: "4.5M baxış", time: "2 il əvvəl" }
+        ];
+
+        const shortsData = [
+            { id: "C_M4-9_A-5k", title: "Funny Cats 🤣" },
+            { id: "tG7tu_s_gfk", title: "Minecraft Parkour" },
+            { id: "y2n9hF8h1fA", title: "Satisfying Video" },
+            { id: "ShortsID4", title: "Amazing Trick!" }
+        ];
+
+        const feed = document.getElementById('videoFeed');
+
+        content.forEach(item => {
+            if (item.type === 'video') {
+                // Video Kartı Yarat
+                let div = document.createElement('div');
+                div.className = 'video-card';
+                div.onclick = () => openPlayer(item);
+                div.innerHTML = `
+                    <div class="thumbnail-box">
+                        <img src="https://img.youtube.com/vi/${item.id}/hqdefault.jpg" class="thumbnail" loading="lazy">
+                        <div class="duration">${item.time === 'Canlı' ? 'CANLI' : '4:20'}</div>
+                    </div>
+                    <div class="video-details">
+                        <img src="https://ui-avatars.com/api/?name=${item.author}&background=random" class="channel-pic">
+                        <div class="info">
+                            <div class="title">${item.title}</div>
+                            <div class="meta">${item.author} • ${item.views} • ${item.time}</div>
+                        </div>
+                        <i class="fas fa-ellipsis-v" style="color:#aaa; padding:5px;"></i>
+                    </div>
+                `;
+                feed.appendChild(div);
+            } else if (item.type === 'shorts') {
+                // Shorts Rəfi Yarat
+                let shelf = document.createElement('div');
+                shelf.className = 'shorts-shelf';
+                
+                let shortsHTML = shortsData.map(s => `
+                    <div class="short-card" onclick="openPlayer({id:'${s.id}', title:'${s.title}', author:'Shorts'})">
+                        <img src="https://i.ytimg.com/vi/${s.id}/oar2.jpg" class="short-img" onerror="this.src='https://via.placeholder.com/150x250?text=Short'">
+                        <div class="short-title">${s.title}</div>
+                    </div>
+                `).join('');
+
+                shelf.innerHTML = `
+                    <div class="shelf-header"><i class="fas fa-bolt shorts-icon"></i> Shorts</div>
+                    <div class="shorts-container">${shortsHTML}</div>
+                `;
+                feed.appendChild(shelf);
+            }
+        });
+
+        function openPlayer(v) {
+            document.getElementById('playerModal').style.display = 'block';
+            document.getElementById('playerFrame').innerHTML = `<iframe src="https://www.youtube.com/embed/${v.id}?autoplay=1&rel=0" allowfullscreen></iframe>`;
+            document.getElementById('mTitle').innerText = v.title;
+            document.getElementById('mMeta').innerText = v.author;
+        }
+
+        function closePlayer() {
+            document.getElementById('playerModal').style.display = 'none';
+            document.getElementById('playerFrame').innerHTML = "";
+        }
+    </script>
+</body>
+</html>
