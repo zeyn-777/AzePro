@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Watch Video</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">▶ AZE YOTUBE</div>
+</div>
+
+<div class="player">
+<iframe id="player" allowfullscreen></iframe>
+<h2 id="title">Video Title</h2>
+<button>👍 Like</button>
+<button>🔔 Subscribe</button>
+</div>
+
+<script>
+const id = new URLSearchParams(window.location.search).get("id");
+document.getElementById("player").src = "https://www.youtube.com/embed/" + id;
+</script>
+
+</body>
+</html>
